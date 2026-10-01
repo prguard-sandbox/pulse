@@ -1,0 +1,8 @@
+[package]
+name = "pulse"
+version = "0.3.0"
+edition = "2021"
+description = "Lightweight in-process metrics: histograms, a shared registry and rolling rates."
+license = "MIT"
+
+[dependencies]
