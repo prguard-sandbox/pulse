@@ -1,5 +1,6 @@
 //! In-process metrics for services that do not want a full metrics stack.
 
+pub mod export;
 pub mod histogram;
 pub mod registry;
 pub mod window;

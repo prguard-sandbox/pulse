@@ -29,6 +29,15 @@ impl RollingRate {
         self.events.len() as f64 / self.window.as_secs_f64()
     }
 
+    /// Events per second since `start`, for a service that started less than a window ago and
+    /// would otherwise under-report its rate.
+    pub fn rate_since(&mut self, start: Instant) -> f64 {
+        let now = Instant::now();
+        self.prune(now);
+        let elapsed = now.duration_since(start).as_secs_f64().min(self.window.as_secs_f64());
+        self.events.len() as f64 / elapsed
+    }
+
     fn prune(&mut self, now: Instant) {
         while let Some(&oldest) = self.events.front() {
             if now.duration_since(oldest) > self.window {
