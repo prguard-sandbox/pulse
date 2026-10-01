@@ -50,6 +50,20 @@ impl Histogram {
         Some(self.sum as f64 / self.total as f64)
     }
 
+    /// The bucket bound below which a fraction `p` of the recorded values fall, e.g.
+    /// `percentile(0.99)` for p99.
+    pub fn percentile(&self, p: f64) -> u64 {
+        let rank = (p * self.total as f64) as u64;
+        let mut seen = 0;
+        for (i, &count) in self.counts.iter().enumerate() {
+            seen += count;
+            if seen > rank {
+                return self.bounds[i];
+            }
+        }
+        self.bounds[self.bounds.len()]
+    }
+
     /// Each bucket's upper bound (`None` for the overflow bucket) and its count.
     pub fn buckets(&self) -> impl Iterator<Item = (Option<u64>, u64)> + '_ {
         self.counts.iter().enumerate().map(|(i, &count)| (self.bounds.get(i).copied(), count))
